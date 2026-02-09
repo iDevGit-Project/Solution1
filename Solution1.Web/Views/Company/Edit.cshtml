@@ -1,0 +1,149 @@
+﻿@model Solution1.Data.VM.CompanyEditViewModels
+@{
+    ViewData["Title"] = "ویرایش شرکت";
+}
+
+<!--begin::Wrapper-->
+<div class="card-body align-items-start flex-column">
+
+    <div class="card-header align-items-start px-0 border-0 pt-50">
+        <h3 class="card-title align-items-start flex-column">
+            <span class="card-label fw-bold text-dark">
+                فرم نمایش اطلاعات شرکت
+            </span>
+            <span class="text-muted mt-1 fw-semibold fs-7">نمایش اطلاعات پایه شرکت</span>
+        </h3>
+
+        <a asp-action="Index" asp-controller="Company" class="btn btn-secondary ms-2">
+            <i class="fas fa-arrow-left me-1"></i> بازگشت
+        </a>
+    </div>
+
+    <div class="modal-body scroll-y px-10 px-lg-8 pt-0 pb-5">
+        <form asp-action="Edit" asp-controller="Company" method="post" id="frmEditCompany">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="CompanyId" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CompanyName" class="form-label"></label>
+                <input asp-for="CompanyName" class="form-control font-bold bg-light-warning" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CompanyActivity" class="form-label"></label>
+                <input asp-for="CompanyActivity" class="form-control font-bold bg-light-warning" />
+                <span asp-validation-for="CompanyActivity" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CompanyPhone" class="form-label"></label>
+                <input asp-for="CompanyPhone" class="form-control font-bold bg-light-warning" />
+                <span asp-validation-for="CompanyPhone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CompanyAddress" class="form-label"></label>
+                <input asp-for="CompanyAddress" class="form-control font-bold bg-light-warning" />
+                <span asp-validation-for="CompanyAddress" class="text-danger"></span>
+            </div>
+
+            <!-- ۱.  سوئیچ وضعیت -->
+            <div class="form-group mb-3 text-center">
+                <label asp-for="IsActive" class="form-label d-block mb-1 fw-semibold text-dark">وضعیت شرکت</label>
+                <div class="form-check form-switch d-inline-block">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="IsActive">
+                    <label class="form-check-label" for="IsActive"></label>
+                </div>
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-hover btn-warning">
+                    <i class="fas fa-save me-1"></i> ذخیره تغییرات
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+<!--end::Wrapper-->
+@section CompanyEditeScripts {
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(function () {
+            /* ---------- ۱. تأیید فعال‌سازی  ---------- */
+            $('#IsActive').on('change', function () {
+                // فقط در صورت فعال شدن
+                if (this.checked) {
+                    Swal.fire({
+                        title: 'آیا مطمئن هستید شرکت را فعال کنید؟',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'بله، فعال کن',
+                        cancelButtonText: 'خیر',
+                        reverseButtons: true
+                    }).then(r => {
+                        if (!r.isConfirmed) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+                }
+            });
+
+            /* ---------- ۲. ارسال AJAX فرم  ---------- */
+            $('#frmEditCompany').submit(function (e) {
+                e.preventDefault();                         // جلوگیری از submit سنتی
+                const form = this;
+
+                // disable submit button to avoid double click
+                const $btn = $(form).find('button[type="submit"]');
+                $btn.prop('disabled', true).addClass('disabled');
+
+                $.ajax({
+                    url: $(form).attr('action'),
+                    type: 'POST',
+                    data: $(form).serialize(),
+                    success: function (resp) {
+                        // SweetAlert بر اساس نوع پاسخ
+                        if (resp.type === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: resp.message,
+                                confirmButtonText: 'باشه',
+                                timer: 4000
+                            }).then(() => {
+                                // پس از تایید، به لیست برگردید
+                                window.location.href = '@Url.Action("Index", "Company")';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: resp.message,
+                                confirmButtonText: 'تلاش مجدد',
+                                timer: 4000
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا در ارتباط',
+                            text: error
+                        });
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false).removeClass('disabled');
+                    }
+                });
+            });
+        });
+    </script>
+}

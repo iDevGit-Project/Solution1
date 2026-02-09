@@ -1,0 +1,183 @@
+﻿@model Solution1.Data.VM.CompanyCreateViewModels
+
+<!--begin::Wrapper-->
+<div class="card-body align-items-start flex-column">
+    <div class="modal-body scroll-y px-10 px-lg-8 pt-0 pb-5">
+        <form id="createForm" asp-action="Create" asp-controller="Company" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-13 text-center">
+                <h1 class="mb-3 ">ثبت اطلاعات شرکت</h1>
+            </div>
+
+            <div class="d-flex flex-column nav-group nav-group-outline mx-auto mb-4 p-10">
+                <div class="card-header align-items-start px-0 border-0 pt-50">
+                    <a class="btn btn-md btn-light-dark h-40px"
+                       data-bs-toggle="tooltip"
+                       data-bs-original-title="بازگشت به لیست اطلاعات شرکت"
+                       href="/Company">
+                        <i class="ki-duotone ki-home fs-3"></i> بازگشت
+                    </a>
+                </div>
+
+                <div class="row mt-10">
+                    <div class="col-lg-4 mb-10 mb-lg-0">
+                        <div class="row g-9 mb-8">
+                            <div class="col-md-12 fv-row">
+                                <label asp-for="CompanyName" class="required fs-6 mb-2 text-dark">
+                                    نام شرکت
+                                </label>
+                                <input asp-for="CompanyName"
+                                       class="form-control form-control-solid fw-semibold fw-bold"
+                                       placeholder="نام شرکت">
+                                <span asp-validation-for="CompanyName" class="fs-6 mb-2 font-bold text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-10 mb-lg-0">
+                        <div class="row g-9 mb-8">
+                            <div class="col-md-12 fv-row">
+                                <label asp-for="CompanyPhone" class="required fs-6 mb-2 text-dark">
+                                    شماره تلفن
+                                </label>
+                                <input asp-for="CompanyPhone"
+                                       class="form-control form-control-solid fw-semibold fw-bold"
+                                       placeholder="شماره تلفن">
+                                <span asp-validation-for="CompanyPhone" class="fs-6 mb-2 font-bold text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-10 mb-lg-0">
+                        <div class="row g-9 mb-8">
+                            <div class="col-md-12 fv-row">
+                                <label asp-for="CompanyActivity" class="required fs-6 mb-2 text-dark">
+                                    نوع فعالیت شرکت
+                                </label>
+                                <input asp-for="CompanyActivity"
+                                       class="form-control form-control-solid fw-semibold fw-bold"
+                                       placeholder="نوع فعالیت شرکت">
+                                <span asp-validation-for="CompanyActivity" class="fs-6 mb-2 font-bold text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 mb-10 mb-lg-0">
+                        <div class="row g-9 mb-8">
+                            <div class="col-lg-12 fv-row">
+                                <label asp-for="CompanyAddress" class="required fs-6 mb-2 text-dark">
+                                    آدرس شرکت
+                                </label>
+                                <input asp-for="CompanyAddress"
+                                       class="form-control form-control-solid fw-semibold fw-bold"
+                                       placeholder="آدرس شرکت را وارد نمائید">
+                                <span asp-validation-for="CompanyAddress" class="fs-6 mb-2 font-bold text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STATUS SWITCH -->
+                    <div class="col-md-12 fv-row">
+                        <label asp-for="IsActive" class="fs-6 mb-2 text-dark">وضعیت شرکت</label>
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive"
+                                   class="form-check-input"
+                                   type="checkbox"
+                                   id="IsActive" />
+                            <label class="form-check-label" for="IsActive"></label>
+                        </div>
+                        <span asp-validation-for="IsActive" class="fs-6 mb-2 font-bold text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" id="btnSubmit" class="btn btn-sm btn-primary me-3">
+                    <i class="ki-duotone ki-plus fs-2"></i> ثبت اطلاعات
+                </button>
+                <button type="button" class="btn btn-sm btn-light-dark me-3" data-bs-dismiss="modal">
+                    انصراف
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--end::Wrapper-->
+
+@section CompanyCreateScripts {
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            const $form   = $('#createForm');
+            const $btn    = $('#btnSubmit');
+            const $switch = $('#IsActive');
+
+            /* --- ۱.  تأیید وضعیت فعال هنگام تغییر چک‌باکس  --- */
+            $switch.on('change', function () {
+                // فقط اگر فعال شد
+                if (this.checked) {
+                    Swal.fire({
+                        title: 'آیا مطمئن هستید که می‌خواهید شرکت را فعال کنید؟',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'بله، فعال کن',
+                        cancelButtonText: 'خیر، لغو',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (!result.isConfirmed) {
+                            // اگر لغو شد، چک‌باکس را بازگردان
+                            $(this).prop('checked', false);
+                        }
+                    });
+                }
+            });
+
+            /* --- ۲.  ارسال فرم با AJAX و SweetAlert نتیجه  --- */
+            $form.on('submit', function (e) {
+                e.preventDefault();                 // مانع ریفرش
+
+                $btn.prop('disabled', true).text('در حال پردازش…');
+
+                const token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: $form.attr('action'),
+                    data: $form.serialize(),
+                    headers: { 'RequestVerificationToken': token },
+                    success: function (resp) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: resp.message,
+                            confirmButtonText: 'ثبت و بازگشت',
+                            customClass: { confirmButton: 'btn btn-success' },
+                            buttonsStyling: false
+                        });
+                        $form[0].reset();
+                    },
+                    error: function (xhr) {
+                        let msg = 'خطای ناشناخته';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: msg,
+                            confirmButtonText: 'بازگشت',
+                            customClass: { confirmButton: 'btn btn-danger' },
+                            buttonsStyling: false,
+                            timer: 4000
+                        });
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false).text('ثبت اطلاعات');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<!--====================================================================-->

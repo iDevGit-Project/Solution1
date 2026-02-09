@@ -1,0 +1,245 @@
+﻿@using Solution1.Data.VM
+@model IEnumerable<CompanyIndexViewModels>
+<!--begin::Wrapper-->
+<div class="card-body align-items-start flex-column">
+    <div class="card-header align-items-start px-0 border-0 pt-50">
+        <h3 class="card-title align-items-start flex-column">
+            <span class="card-label fw-bold text-dark">
+                فرم نمایش اطلاعات شرکت
+            </span> <span class="text-muted mt-1 fw-semibold fs-7">نمایش اطلاعات پایه شرکت</span>
+        </h3>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-md btn-light-dark" data-bs-toggle="tooltip"
+           data-bs-original-title="بازگشت " data-kt-initialized="1">
+            <i class="ki-duotone ki-home fs-3">
+            </i> 
+            بازگشت به صفحه اصلی
+        </a>
+    </div>
+    <div class="card-header align-items-start px-0 border-0 pt-6">
+        <div class="card-title">
+            <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-outline ki-magnifier fs-1 position-absolute ms-4"></i> <input type="text"
+                                                                                           id="productSearch" class="form-control form-control-solid w-250px ps-12" autocomplete="off"
+                                                                                           placeholder="جستجو اطلاعات">
+                <div id="autoCompleteDiv"></div><span class="search-spinner position-absolute top-50 end-0 translate-middle-y lh-0 d-none me-1"
+                                                      data-kt-filter="spinner">
+                    <span class="spinner-border align-middle text-gray-400"></span>
+                </span>
+            </div>
+        </div>
+        <div class="card-toolbar">
+            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+                <button type="button" id="kt_refresh_datatable"
+                                  class="btn btn-md btn-light-success me-3" data-bs-toggle="tooltip"
+                                  data-bs-original-title="بروزرسانی اطلاعات کالاها" data-kt-initialized="1">
+                    <span class="indicator-label">بروزرسانی اطلاعات</span> <span class="indicator-progress">
+                        در حال انجام
+                        ...<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-md btn-light-success me-3" data-kt-menu-trigger="click"
+                        data-kt-menu-placement="bottom-end" data-bs-toggle="tooltip"
+                        data-bs-original-title="دریافت خروجی از اطلاعات جدول" data-kt-initialized="1">
+                    <i class="ki-duotone ki-exit-down fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    دریافت خروجی
+                </button>
+                <div id="kt_datatable_export_menu"
+                     class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4"
+                     data-kt-menu="true">
+                    <div class="menu-item px-3">
+                        <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                            Export as PDF
+                        </a>
+                    </div>
+                    <div class="menu-item px-3">
+                        <a href="#" class="menu-link px-3" data-kt-export="excel">
+                            Export as
+                            Excel
+                        </a>
+                    </div>
+                    <div id="kt_datatable_buttons" class="d-none"></div>
+                </div>
+                <a asp-action="Create" asp-controller="Company" class="btn btn-primary" data-bs-toggle="tooltip"
+                   data-bs-original-title="ثبت اطلاعات شرکت جاری " data-kt-initialized="1">
+                    ثبت اطلاعات شرکت
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+        <div class="table-responsive">
+            <!--begin::Table-->
+            <table class="table border border-solid table-row-dashed rounded table-row-gray-300 align-middle gs-0 gy-4">
+                <thead>
+                    <tr class="text-right bg-light font-bold min-w-140px">
+                        <td class="text-center text-gray-900 fw-bold fs-6" hidden>@Html.DisplayNameFor(c => c.CompanyId)</td>
+                        <td class="text-center text-gray-900 fw-bold fs-6">@Html.DisplayNameFor(c => c.CompanyName)</td>
+                        <td class="text-center text-gray-900 fw-bold fs-6">@Html.DisplayNameFor(c => c.CompanyActivity)</td>
+                        <td class="text-center text-gray-900 fw-bold fs-6">@Html.DisplayNameFor(c => c.CompanyPhone)</td>
+                        <td class="text-center text-gray-900 fw-bold fs-6">@Html.DisplayNameFor(c => c.IsActive)</td>
+                        <td class="text-right text-gray-900 fw-bold fs-6">@Html.DisplayNameFor(c => c.CompanyAddress)</td>
+                        <td class="text-center text-gray-900 fw-bold fs-6"> عملیات</td>
+                        @* @foreach (var Tablename in (IEnumerable<string>)ViewBag.ColumnNames)
+                        {
+                        <th>@Tablename</th>
+                        } *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="text-right min-w-140px ">
+                            <td class="text-center text-gray-900 fs-6" hidden>@item.CompanyId</td>
+                            <td class="text-center text-gray-900 fs-6">@item.CompanyName</td>
+                            <td class="text-center text-gray-900 fs-6">@item.CompanyActivity</td>
+                            <td class="text-center text-gray-900 fs-6">@item.CompanyPhone</td>
+                            <td class="text-center text-gray-900 fs-6">
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge badge-light-success fs-6">فعال</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger fs-6">غیرفعال</span>
+                                }
+                            </td>
+                            <td class="text-right text-gray-900 fs-6">@item.CompanyAddress</td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.CompanyId" class="btn btn-light-warning" data-bs-toggle="tooltip"
+                                   data-bs-original-title="ویرایش اطلاعات">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 16">
+                                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z" />
+                                    </svg>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.CompanyId" class="btn btn-light-danger" data-bs-toggle="tooltip"
+                                   data-bs-original-title="حذف اطلاعات">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                
+                </tbody>
+            </table>
+            <!--end::Table-->
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+                <div class="dataTables_length" id="datatable_product_length">
+                    <label>
+                        نمایش
+                        <select name="datatable_product_length" aria-controls="datatable_product"
+                                class="form-select form-select-sm form-select-solid">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> ردیف
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+                <div class="dataTables_paginate paging_simple_numbers" id="datatable_product_paginate">
+                    <ul class="pagination">
+                        <li class="paginate_button page-item previous disabled" id="datatable_product_previous">
+                            <a href="#" aria-controls="datatable_product" data-dt-idx="0" tabindex="0"
+                               class="page-link">قبلی</a>
+                        </li>
+                        <li class="paginate_button page-item active">
+                            <a href="#" aria-controls="datatable_product"
+                               data-dt-idx="1" tabindex="0" class="page-link">1</a>
+                        </li>
+                        <li class="paginate_button page-item next disabled" id="datatable_product_next">
+                            <a href="#"
+                               aria-controls="datatable_product" data-dt-idx="2" tabindex="0"
+                               class="page-link">بعدی</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::Wrapper-->
+@section CompanyIndexScripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <!--اسکریپت مربوط به حذف نرم یا غیرفعالسازی اطلاعات-->
+    <script>
+        $(function () {
+            // ② کلیک روی دکمهٔ حذف
+            $('body').on('click', '.btn-delete', function (e) {
+                e.preventDefault();                       // جلوگیری از رفتار پیش‌فرض
+
+                const $btn = $(this);                     // دکمهٔ کلیک ‌شده
+                const id = $btn.data('id');             // شناسه شرکت
+                const name = $btn.data('name');           // نام شرکت
+                const addr = $btn.data('address');        // آدرس شرکت
+
+                // ③ SweetAlert – پیغام تأیید
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    html: `<p>حذف شرکت <strong>${name}</strong> (نشانی: ${addr})</p>
+                                   <p>این عمل <strong>غیرقابل بازگشت</strong> است.</p>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'بله، حذف کنید!',
+                    cancelButtonText: 'انصراف',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+                        // ④ انصراف – نمایش پیغام کوتاه
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'عملیات لغو شد.',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        return;   // پایان
+                    }
+
+                    // ⑤ AJAX – Soft‑Delete
+                    $.ajax({
+                        url: '/Company/Delete',           // مسیر متد DeleteConfirmed
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            __RequestVerificationToken: $('#csrf-form input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (resp) {
+                            if (resp.type === 'success') {
+                                // ⑥ حذف ردیف از جدول (اختیاری)
+                                $btn.closest('tr').remove();
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: resp.message,
+                                    timer: 1800,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: resp.message,
+                                    timer: 1800,
+                                    showConfirmButton: false
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا در ارتباط',
+                                text: xhr.responseText || 'خطا داخلی سرور'
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

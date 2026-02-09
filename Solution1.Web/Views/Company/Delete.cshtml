@@ -1,0 +1,102 @@
+﻿
+@model Solution1.Data.VM.CompanyEditViewModels
+@{
+    ViewData["Title"] = "حذف شرکت";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="alert alert-danger mb-4" role="alert">
+            <h4 class="alert-heading">تأیید حذف</h4>
+            <p>آیا از حذف این شرکت مطمئن هستید؟ این عمل برگشت‌ناپذیر است.</p>
+            <hr>
+            <p class="mb-0">
+                <strong>نام شرکت:</strong> @Model.CompanyName <br />
+                <strong>نشانی:</strong> @Model.CompanyAddress
+            </p>
+        </div>
+
+        <form asp-action="Delete" asp-controller="Company" method="post" id="frmDeleteCompany">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="CompanyId"  value="@Model.CompanyId"/>
+
+            <button type="submit" class="btn btn-danger me-2">
+                <i class="fas fa-trash me-1"></i> حذف
+            </button>
+
+            <a asp-action="Index" asp-controller="Company" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> بازگشت
+            </a>
+        </form>
+    </div>
+</div>
+
+@section CompanyDeleteScripts {
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+
+    <script>
+        $(function () {
+            $('#frmDeleteCompany').submit(function (e) {
+                e.preventDefault();            // جلوگیری از submit معمولی
+
+                const form = this;
+                const formData = $(form).serialize();  // داده‌های فرم
+
+                // اولین SweetAlert: تأیید حذف
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: "این کار غیرقابل بازگشت است!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'بله، حذف کنید!',
+                    cancelButtonText: 'انصراف'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ارسال AJAX
+                        $.ajax({
+                            url: $(form).attr('action'),
+                            type: 'POST',
+                            data: formData,
+                            success: function (resp) {
+                                // پیام SWAL بر اساس پاسخ
+                                if (resp.type === 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: resp.message,
+                                        showConfirmButton: true,
+                                        confirmButtonText: 'باشه',
+                                        timer: 4000
+                                    }).then(() => {
+                                        // بازگشت به لیست
+                                        window.location.href = '@Url.Action("Index", "Company")';
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: resp.message,
+                                        showConfirmButton: true,
+                                        confirmButtonText: 'تلاش مجدد',
+                                        timer: 4000
+                                    });
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطا در ارتباط',
+                                    text: error
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
