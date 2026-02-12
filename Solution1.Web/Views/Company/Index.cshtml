@@ -70,7 +70,7 @@
     <div class="dataTables_wrapper dt-bootstrap4 no-footer">
         <div class="table-responsive">
             <!--begin::Table-->
-            <table class="table border border-solid table-row-dashed rounded table-row-gray-300 align-middle gs-0 gy-4">
+            <table class="table border border-solid table-row-dashed rounded table-row-gray-300 align-middle gs-0">
                 <thead>
                     <tr class="text-right bg-light font-bold min-w-140px">
                         <td class="text-center text-gray-900 fw-bold fs-6" hidden>@Html.DisplayNameFor(c => c.CompanyId)</td>
@@ -106,18 +106,26 @@
                             </td>
                             <td class="text-right text-gray-900 fs-6">@item.CompanyAddress</td>
                             <td class="text-center">
-                                <a asp-action="Edit" asp-route-id="@item.CompanyId" class="btn btn-light-warning" data-bs-toggle="tooltip"
-                                   data-bs-original-title="ویرایش اطلاعات">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 16">
+                                <a asp-action="Edit" asp-route-id="@item.CompanyId" class="bg-hover-light-warning text-hover-warning btn btn-icon btn-color-muted btn-bg-light btn-md me-1" title="ویرایش اطلاعات" data-bs-toggle="tooltip" data-bs-original-title="ویرایش اطلاعات">
+                                    <i class="far fa-eraser-alt text-red fs-2x" aria-hidden="true"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 16">
                                         <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z" />
                                     </svg>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@item.CompanyId" class="btn btn-light-danger" data-bs-toggle="tooltip"
+                                <a href="#" class="bg-hover-light-danger text-hover-danger btn btn-icon btn-color-muted btn-bg-light btn-md btn-delete"
+                                   data-id="@item.CompanyId"
+                                   data-name="@item.CompanyName"
+                                   data-address="@item.CompanyAddress" title="حذف اطلاعات" data-bs-toggle="tooltip" data-bs-original-title="حذف اطلاعات">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </a>
+@*                                 <a asp-action="Delete" asp-route-id="@item.CompanyId" class="btn btn-light-danger" data-bs-toggle="tooltip"
                                    data-bs-original-title="حذف اطلاعات">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                         <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
                                     </svg>
-                                </a>
+                                </a> *@
                             </td>
                         </tr>
                     }
@@ -166,35 +174,40 @@
 <!--end::Wrapper-->
 @section CompanyIndexScripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <!--اسکریپت مربوط به حذف نرم یا غیرفعالسازی اطلاعات-->
+    <!--Delete View اسکریپت مربوط به حذف نرم به صورت نمایش فرم -->
     <script>
         $(function () {
             // ② کلیک روی دکمهٔ حذف
             $('body').on('click', '.btn-delete', function (e) {
                 e.preventDefault();                       // جلوگیری از رفتار پیش‌فرض
-
                 const $btn = $(this);                     // دکمهٔ کلیک ‌شده
                 const id = $btn.data('id');             // شناسه شرکت
                 const name = $btn.data('name');           // نام شرکت
-                const addr = $btn.data('address');        // آدرس شرکت
+                //const addr = $btn.data('address');        // آدرس شرکت
 
                 // ③ SweetAlert – پیغام تأیید
                 Swal.fire({
                     title: 'آیا مطمئن هستید؟',
-                    html: `<p>حذف شرکت <strong>${name}</strong> (نشانی: ${addr})</p>
-                                   <p>این عمل <strong>غیرقابل بازگشت</strong> است.</p>`,
-                    icon: 'warning',
+                    html: `<p>آیا با حذف شرکت <strong>${name}</strong> موافقید؟ </p>`,
+                    icon: 'error',
                     showCancelButton: true,
+                    allowOutsideClick: false,
+                    animation: true,
+                    allowEscapeKey: true,
+                    buttonsStyling: false,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'بله، حذف کنید!',
-                    cancelButtonText: 'انصراف',
-                    reverseButtons: true
+                    confirmButtonText: 'بله، مشخصات حذف شود!',
+                    cancelButtonText: 'انصراف و بازگشت',
+                    reverseButtons: false,
+                    customClass: {
+                        cancelButton: "btn btn-md btn-light-dark",
+                    },
                 }).then((result) => {
                     if (!result.isConfirmed) {
                         // ④ انصراف – نمایش پیغام کوتاه
                         Swal.fire({
-                            icon: 'info',
+                            icon: 'warning',
                             title: 'عملیات لغو شد.',
                             timer: 1200,
                             showConfirmButton: false
@@ -236,6 +249,64 @@
                                 title: 'خطا در ارتباط',
                                 text: xhr.responseText || 'خطا داخلی سرور'
                             });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <!--اسکریپت مربوط به حذف نرم یا غیرفعالسازی اطلاعات-->
+    <script>
+        $(function () {
+            // کلیک روی دکمه یا لینک حذف
+            $('body').on('click', '.btn-delete', function (e) {
+                e.preventDefault();   // جلوگیری از ناوبری
+                const $btn = $(this);
+                const id   = $btn.data('id');
+                const name = $btn.data('name');
+                //const addr = $btn.data('address');
+
+                Swal.fire({
+                    title: 'عملیات حذف اطلاعات شرکت',
+                    html: `<p>آیا با حذف شرکت <strong>${name}</strong> موافقید؟ </p>`,
+                    icon: 'error',
+                    allowOutsideClick: false,
+                    animation: true,
+                    allowEscapeKey: true,
+                    buttonsStyling: false,
+                    animation: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، حذف شود!',
+                    cancelButtonText: 'انصراف و بازگشت',
+                    customClass: {
+                        confirmButton:"btn btn-md btn-danger me-3",
+                        cancelButton: "btn btn-md btn-light-dark",
+                    },
+                    reverseButtons: false,
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+                        Swal.fire({icon: 'warning', title: 'عملیات لغو شد.', timer: 1200, showConfirmButton: false});
+                        return;
+                    }
+
+                    // AJAX برای Soft‑Delete
+                    $.ajax({
+                        url: '/Company/Delete',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            __RequestVerificationToken: $('#csrf-form input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (resp) {
+                            if (resp.type === 'success') {
+                                $btn.closest('tr').remove();
+                                Swal.fire({icon: 'success', title: resp.message, timer: 1800, showConfirmButton: false});
+                            } else {
+                                Swal.fire({icon: 'error', title: resp.message, timer: 1800, showConfirmButton: false});
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({icon: 'error', title: 'خطا در ارتباط', text: xhr.responseText || 'خطای سرور'});
                         }
                     });
                 });

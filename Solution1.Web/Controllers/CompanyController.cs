@@ -239,35 +239,43 @@ namespace Solution1.Web.Controllers
                 CompanyAddress = company.CompanyAddress
             };
 
-            return View(model);                  // strongly‑typed
+            return View(model);  // strongly‑typed
         }
 
-        [HttpPost]  // POST (یا DELETE)
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (id <= 0)
+            {
                 return BadRequest(new
                 {
                     type = "error",
                     message = "شناسه معتبر نمی‌باشد."
                 });
+            }
 
+            // ۱. پیدا کردن فقط ردیف‌های فعال
             var entity = await _DbContext.Companies
-                .FirstOrDefaultAsync(c => c.CompanyId == id);
+                                        .FirstOrDefaultAsync(c => c.CompanyId == id);
 
             if (entity == null)
+            {
                 return NotFound();
+            }
+
+            // ۲. علامت‌گذاری Soft‑Delete
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
 
             try
             {
-                _DbContext.Companies.Remove(entity);
                 await _DbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, $"حذف شرکت {id} خطا داد.");
+                _logger?.LogError(ex, $"Soft‑Delete شرکت {id} خطا داد.");
                 return StatusCode(500, new
                 {
                     type = "error",
@@ -275,12 +283,54 @@ namespace Solution1.Web.Controllers
                 });
             }
 
+            // ۳. پاسخ JSON برای SweetAlert
             return Ok(new
             {
                 type = "success",
-                message = "اطلاعات با موفقیت حذف شد."
+                message = "اطلاعات با موفقیت حذف (soft) شد."
             });
         }
+
+
+        //[HttpPost]  // POST (یا DELETE)
+        //[ValidateAntiForgeryToken]
+        //[ActionName("Delete")]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    if (id <= 0)
+        //        return BadRequest(new
+        //        {
+        //            type = "error",
+        //            message = "شناسه معتبر نمی‌باشد."
+        //        });
+
+        //    var entity = await _DbContext.Companies
+        //        .FirstOrDefaultAsync(c => c.CompanyId == id);
+
+        //    if (entity == null)
+        //        return NotFound();
+
+        //    try
+        //    {
+        //        _DbContext.Companies.Remove(entity);
+        //        await _DbContext.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger?.LogError(ex, $"حذف شرکت {id} خطا داد.");
+        //        return StatusCode(500, new
+        //        {
+        //            type = "error",
+        //            message = "خطا در ذخیره‌سازی. دوباره تلاش کنید."
+        //        });
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        type = "success",
+        //        message = "اطلاعات با موفقیت حذف شد."
+        //    });
+        //}
 
         #endregion
     }

@@ -13,5 +13,19 @@ namespace Solution1.Data.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Company> Companies { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // 1. Filter globally: فقط ردیف‌های `IsDeleted == false` برگردانده شود
+            modelBuilder.Entity<Company>()
+                .HasQueryFilter(c => !c.IsDeleted);
+
+            // (اختیاری) فیلد پیش‌فرض برای DateTime؟
+            modelBuilder.Entity<Company>()
+                .Property(c => c.DeletedAt)
+                .HasDefaultValueSql("NULL");     // اگر می‌خواهید در SQL مقدار پیش‌فرض را تنظیم کنید
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

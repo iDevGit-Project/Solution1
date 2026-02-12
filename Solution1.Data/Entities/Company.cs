@@ -33,5 +33,9 @@ namespace Solution1.Data.Entities
 
         [Display(Name = "وضعیت شرکت")]
         public bool IsActive { get; set; } = false;   // پیش‌فرض “غیر فعال”
+
+        // فیلدهای Soft‑Delete
+        public bool IsDeleted { get; set; } = false;        // ۱. فیلد بولی
+        public DateTime? DeletedAt { get; set; } = null;   // ۲. تاریخ حذف (اختیاری)
     }
 }
